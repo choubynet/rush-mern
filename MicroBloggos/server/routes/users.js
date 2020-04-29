@@ -79,6 +79,7 @@ router.route('/login')
                 }               
             })
     })
+
 router.route('/')
     .get( passport.authenticate('jwt', { session: false }),(req, res) => {
         res.json({
