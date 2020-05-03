@@ -10,7 +10,11 @@ import Main from './components/Layout/Main';
 import Home from './components/Home';
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
-
+import Profile from './components/Profile/Profile';
+import Modify from './components/Profile/Modify'
+import NotFound from './components/NotFound';
+import Search from './components/Search/NotFound';
+import MembersList from './components/Members/MembersList';
 import setAuthHeader from './utils/setAuthHeader';
 import { logoutUser, getCurrentUser } from './actions/authActions';
 
@@ -39,6 +43,11 @@ class App extends Component {
                 <Route exact path="/" component={Home} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
+                <Route path="/profile/:userId" component={Profile} />
+                <Route path="/modify/:userId" component={Modify} />
+                <Route path="/search" component={Search} />
+                <Route path="/members" component={MembersList} />
+                <Route component={NotFound} />
               </Switch>
             </Main>
           </BrowserRouter>

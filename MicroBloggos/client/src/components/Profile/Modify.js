@@ -5,9 +5,8 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Link } from 'react-router-dom'
 
-import { registerUser } from '../../actions/authActions';
+import { modifyUser } from '../../actions/profileActions';
 
 const styles = {
     textField: {
@@ -21,7 +20,7 @@ const styles = {
     }
 }
 
-class Register extends Component {
+class Modify extends Component {
     constructor (props) {
         super(props);
         this.state = {
@@ -50,25 +49,22 @@ class Register extends Component {
             password: this.state.password,
             password2: this.state.password2
         }
-        this.props.registerUser(userData, this.props.history);
+        this.props.modifyUser(userData, this.props.history);
     }    
     render () {
-        const { classes } = this.props;
+        const { classes, user } = this.props;
         const { errors } = this.state
         return (
             <Paper style={{ padding: 15 }}>
                 <h4>
-                    <b>Register</b> below
-                </h4>
-                <p>
-                    Already have an account? <Link to="/login">Log in</Link>
-                </p>
+                    <b>Modify</b> below
+                </h4>                
                 <form onSubmit={this.handleSubmit}>
                     <TextField 
                         type="email"
                         label="Email"
                         name="email"           
-                        value={this.state.email}
+                        value={user.email}
                         onChange={this.handleChange}         
                         className={classes.textField}
                         helperText={errors.email ? errors.email : ''}
@@ -78,7 +74,7 @@ class Register extends Component {
                         label="Login"
                         type="text"
                         name="login"                                   
-                        value={this.state.login}  
+                        value={user.login}  
                         onChange={this.handleChange}    
                         className={classes.textField}
                         helperText={errors.login ? errors.login : ''}
@@ -116,7 +112,8 @@ class Register extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    errors: state.errors
+    errors: state.errors,
+    user: state.auth.user
 })
 
-export default connect(mapStateToProps, { registerUser })(withRouter(withStyles(styles)(Register)));
+export default connect(mapStateToProps, { modifyUser })(withRouter(withStyles(styles)(Modify)));

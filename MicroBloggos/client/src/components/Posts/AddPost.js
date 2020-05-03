@@ -17,10 +17,10 @@ const styles = {
         width: '100%',
         marginTop: 20,
         marginBottom: 10,
-        backgroundColor: '#800080',
+        backgroundColor: '#0d22ca',
         color: '#fff',
         '&:hover': {
-            color: '#800080'
+            color: '#0d22ca'
         }
     }
 }
@@ -58,6 +58,9 @@ class AddPost extends Component {
                 <TextField
                     multiline
                     rowsMax="4"
+                    inputProps={{
+                        maxLength: 140,
+                      }}
                     label="What's new ?"
                     className={ classes.textField}
                     onChange={this.handleChange}

@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { loginUser } from '../../actions/authActions'
+import { Link } from 'react-router-dom'
 
 const styles = {
     textField: {
@@ -59,6 +60,12 @@ class Login extends Component {
         const { errors } = this.state;
         return (
             <Paper style={{ padding: 15 }}>
+                <h4>
+                    <b>Login</b> below
+                </h4>
+                <p>
+                    Don't have an account? <Link to="/register">Register</Link>
+                </p>
                 <form onSubmit={this.handleSubmit}>
                     <TextField 
                         type="email"

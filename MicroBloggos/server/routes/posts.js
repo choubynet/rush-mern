@@ -22,12 +22,42 @@ router.route('/add')
         }    
     )
 
-router.route('/')
-        .get((req, res) => {
-            Post.find()
-                .sort({ createdAt: -1 })
-                .then(posts => res.json(posts))
+router.route('/delete')
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        (req, res) => {
+            Post.findOneAndRemove({_id: req.body.id, "user.id": req.user.id}, req.body)
+                .then(res.json("Ok"))
                 .catch(err => console.log(err))
-        })
+        }    
+    )
+
+router.route('/')
+    .get((req, res) => {
+        Post.find()
+            .sort({ createdAt: -1 })
+            .then(posts => res.json(posts))
+            .catch(err => console.log(err))
+    })
+
+router.route('/following')
+    .get(
+        passport.authenticate('jwt', { session: false }),
+        (req, res) => {
+            Post.find({
+                'user.id': { $in: req.user.following }
+            })
+            .sort({ createdAt: -1 })
+            .then(posts => res.json(posts))
+            .catch(err => console.log(err))
+    })
+
+router.route('/:userId')
+    .get((req, res) => {
+        Post.find({ 'user.id': req.params.userId })
+            .sort({ createdAt : -1 })  
+            .then(posts => res.json(posts))
+            .catch(err => console.log(err))                
+    })
 
 module.exports = router;

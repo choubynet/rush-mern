@@ -12,6 +12,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
 
 import { logoutUser } from '../../actions/authActions'
+import SearchForm from '../Search/SearchForm';
 
 const styles = {
 	root: {
@@ -46,7 +47,7 @@ class Header extends Component {
     }
 
     render () {
-        const { classes, isAuthenticated } = this.props;
+        const { classes, isAuthenticated, user } = this.props;
         const { anchorEl } = this.state
 		const open = Boolean(anchorEl)
         
@@ -108,7 +109,12 @@ class Header extends Component {
 					anchorEl={anchorEl}
 					onClose={this.handleClose}
 				>
-                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={this.handleClose}>
+						<Link to={`/profile/${user._id}`}>Profile</Link>
+					</MenuItem>
+					<MenuItem onClick={this.handleClose}>
+						<Link to={`/members/`}>Members</Link>
+					</MenuItem>
                     <MenuItem >
 						<Link to="/#" onClick={this.handleLogout}>Logout</Link>
 					</MenuItem>
@@ -117,9 +123,10 @@ class Header extends Component {
 		)
         return (
 			<div className={classes.root}>
-				<AppBar position="static" style={{ backgroundColor: '#4B0082'}}>
+				<AppBar position="static" style={{ backgroundColor: '#3448e8'}}>
 					<Toolbar className={classes.space}>
 						<Link to="/" className={classes.logo}>Microbloggos</Link>
+						<SearchForm />
 						{ isAuthenticated ? authLinks : guestLinks }
 					</Toolbar>
 				</AppBar>
@@ -129,7 +136,8 @@ class Header extends Component {
 }
 
 const mapStateToProps = (state) => ({
-	isAuthenticated: state.auth.isAuthenticated
+	isAuthenticated: state.auth.isAuthenticated,
+	user: state.auth.user
 })
 
 export default connect(mapStateToProps, { logoutUser })(withStyles(styles)(Header))
