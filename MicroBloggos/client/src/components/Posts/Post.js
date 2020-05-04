@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { deletePost } from '../../actions/postActions';
+import { deletePost, editPost } from '../../actions/postActions';
+import { withRouter } from 'react-router-dom';
 
 const styles = {
     paper: {
@@ -36,14 +38,55 @@ const styles = {
             borderColor: '#7584ff',
             backgroundColor: 'white'
         }
+    },
+    btnEdit: {
+        marginRight: "3px",
+        backgroundColor: '#7584ff',
+        color: 'white',
+        '&:hover': {
+            color: '#7584ff',
+            borderColor: '#7584ff',
+            backgroundColor: 'white'
+        }
     }
 }
 
 class Post extends Component {
     constructor (props) {
         super(props)
+
+        this.state = { text: '' }
+        this.state = { editMode: false }
         
+        this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleChange = this.handleChange.bind(this)
         this.handleDelete = this.handleDelete.bind(this);
+    }
+
+    changeEditMode = () => {
+        this.setState({
+          editMode: !this.state.editMode,
+        })
+      }
+
+    handleChange(e) {
+        this.setState({ text: e.target.value })      
+    }
+
+    handleSubmit(e) {
+        e.preventDefault()
+
+        const postData = {
+            text: this.state.text,
+            id: this.props.post._id,
+        }
+
+        this.props.editPost(postData)
+
+        this.setState({
+            editMode: !this.state.editMode,
+        })
+        this.forceUpdate();
     }
 
     handleDelete (){
@@ -53,7 +96,7 @@ class Post extends Component {
 
         this.props.deletePost(postData);
         this.forceUpdate();
-	}
+    }
 
     render () {
         const { classes, post, auth, user } = this.props;
@@ -64,15 +107,73 @@ class Post extends Component {
                     <Button
                         size="small"
                         variant='outlined'
+                        className={classes.btnEdit}
+                        onClick={this.changeEditMode}>
+                        Edit
+                    </Button>
+                    <Button
+                        size="small"
+                        variant='outlined'
                         className={classes.btnDelete}
                         onClick={this.handleDelete}>
                         Delete
-                    </Button>
+                    </Button>                    
                 </div>)
             }
         }
 
-        return (
+        return this.state.editMode ? (
+            <Paper className={classes.paper}>
+                <div
+                    className={classes.avatar}
+                    style={{
+                        backgroundColor: `#${post.user.id.slice(
+                        post.user.id.length - 3,
+                        )}`,
+                    }}
+                />
+                <div>
+                    <h3 className={classes.login}>
+                        <Link to={`/profile/${post.user.id}`}>{post.user.username}</Link>
+                        <span className={classes.time}>
+                            {new Date(post.createdAt).toLocaleString()}
+                        </span>                        
+                    </h3>
+                    <form onSubmit={this.handleSubmit}>
+                        <TextField
+                            id="outlined-basic"
+                            multiline
+                            rowsMax="4"
+                            inputProps={{
+                                maxLength: 140,
+                            }}
+                            label="Edit"
+                            className={classes.TextField}
+                            onChange={this.handleChange}
+                            value={this.state.text}
+                            defaultValue={post.text}
+                        />
+                        
+                    </form>
+                </div>
+                <div className={classes.btnBlock}>
+                    <Button
+                        size="small"
+                        variant='outlined'
+                        className={classes.btnEdit}
+                        onClick={this.changeEditMode}>
+                        Cancel
+                    </Button>
+                    <Button
+                        size="small"
+                        variant='outlined'
+                        className={classes.btnDelete}
+                        onClick={this.handleSubmit}>
+                        Update
+                    </Button>
+                </div>
+            </Paper>
+            ) : (
             <Paper className={classes.paper}>
                 <div
                     className={classes.avatar}
@@ -98,4 +199,4 @@ const mapStateToProps = (state) => ({
     user: state.auth.user
 })
 
-export default connect(mapStateToProps, { deletePost })(withStyles(styles)(Post));
+export default connect(mapStateToProps, { deletePost, editPost })(withRouter(withStyles(styles)(Post)));

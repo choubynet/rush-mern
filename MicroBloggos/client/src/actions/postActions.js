@@ -3,13 +3,24 @@ import {
     ADD_POST,
     GET_POSTS,
     LOADING_POSTS,
-    DELETE_POST
+    DELETE_POST,
+    GET_ERRORS
 } from '../constants';
 
 export const loadPosts = () => dispatch => {
     return {
         type: LOADING_POSTS
     }
+}
+
+export const getPostById = (postId) => dispatch => {
+    dispatch(loadPosts())
+    axios.get('http://localhost:5000/api/users/find/', postId)
+        .then(res => dispatch({
+            type: GET_POSTS,
+            payload: res.data
+        }))
+        .catch(err => console.log(err))
 }
 
 export const addPost = postData => dispatch => {
@@ -28,6 +39,15 @@ export const deletePost = postData => dispatch => {
             payload: res.data
         }))
         .catch(err => console.log(err))
+}
+
+export const editPost = (postData, history) => dispatch => {
+    axios.post('http://localhost:5000/api/posts/edit', postData)
+        .then(res => history.push(`/`))
+        .catch(err => dispatch({
+            type: GET_ERRORS,
+            payload: err.response.data
+        }))
 }
 
 export const getPosts = () => dispatch => {

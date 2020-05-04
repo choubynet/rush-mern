@@ -1,6 +1,8 @@
 const router = require("express").Router();
+const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const Post = require("../models/Post");
+const User = require("../models/User");
 
 router.route('/add')
     .post(
@@ -32,6 +34,16 @@ router.route('/delete')
         }    
     )
 
+router.route('/edit')
+    .post(
+        passport.authenticate('jwt', { session: false }),
+        (req, res) => {
+            Post.findOneAndUpdate({_id: req.body.id, "user.id": req.user.id}, {text: req.body.text}, {new: true})
+                .then(Post => res.json(Post))
+                .catch(err => console.log(err))
+        }    
+    )
+
 router.route('/')
     .get((req, res) => {
         Post.find()
@@ -50,6 +62,22 @@ router.route('/following')
             .sort({ createdAt: -1 })
             .then(posts => res.json(posts))
             .catch(err => console.log(err))
+    })
+
+router.route('/find')
+    .get((req, res) => {
+        Post.findById(req.body.postId)
+            .then(post => {
+                if (post) {
+                    return res.json({
+                        text: post.text
+                    })
+                }
+                else {
+                    return res.status(404).json({ msg: 'Post not found'})
+                }
+            })
+            .catch(err => console.log(err))                
     })
 
 router.route('/:userId')
