@@ -1,2 +1,0 @@
-sudo mongod
-npm start (server and client)
